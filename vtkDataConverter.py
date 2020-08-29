@@ -258,9 +258,9 @@ if ( __name__=="__main__" ):
     # --- [1] test profiles                         --- #
     # ------------------------------------------------- #
     import nkUtilities.generate__testprofile as gtp
-    x1MinMaxNum = [ 0.0, 1.0, 21 ]
+    x1MinMaxNum = [ 0.0, 1.0, 31 ]
     x2MinMaxNum = [ 0.0, 1.0, 21 ]
-    x3MinMaxNum = [ 0.0, 1.0, 21 ]
+    x3MinMaxNum = [ 0.0, 1.0, 11 ]
     Data        = gtp.generate__testprofile( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
     	                                     x3MinMaxNum=x3MinMaxNum, returnType = "structured" )
 

@@ -91,7 +91,7 @@ class vtkDataUnit():
             self.Extent = [ 0, 0, 0, 0, 0, 0 ]
             if ( self.DataOrder == "ijk" ):
                 for ik in range( len( self.shape )-1 ):
-                    self.Extent[2*ik+1] = self.shape[ik] - 1
+                    self.Extent[2*ik+1] = ( self.shape[-2-ik] ) - 1
             if ( self.DataOrder == "kji" ):
                 for ik in range( len( self.shape )-1 ):
                     self.Extent[2*ik+1] = self.shape[ik]
