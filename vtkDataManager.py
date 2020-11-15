@@ -11,23 +11,25 @@ class vtkDataManager():
     # ------------------------------------------------- #
     # --- vtk Data Manager Initialization         --- #
     # ------------------------------------------------- #
-    def __init__( self, Data=None, tag=None, DataOrder=None, DataType=None, shape=None ):
+    def __init__( self, Data=None, tag=None, DataOrder=None, DataType=None, shape=None, \
+                  DataLabel=None ):
         
         self.Data  = {}
         self.tags  = []
 
         if ( ( Data is not None ) and ( Data is not None ) ):
             self.add__vtkDataUnit( Data=Data, tag=tag, DataOrder=DataOrder, \
-                                   DataType=DataType, shape=shape )
+                                   DataType=DataType, shape=shape, DataLabel=DataLabel )
 
             
     # ------------------------------------------------- #
     # --- add vtk Data structure                    --- #
     # ------------------------------------------------- #
-    def add__vtkDataUnit( self, Data=None, tag=None, DataOrder=None, DataType=None, shape=None ):
-
+    def add__vtkDataUnit( self, Data=None, tag=None, DataOrder=None, DataType=None, \
+                          DataLabel=None, shape=None ):
         self.Data[ tag ] = vdu.vtkDataUnit( Data=Data, tag=tag , shape   =shape, \
-                                            DataOrder=DataOrder, DataType=DataType )
+                                            DataOrder=DataOrder, DataType=DataType, \
+                                            DataLabel=DataLabel )
         self.tags.append( tag ) 
 
         

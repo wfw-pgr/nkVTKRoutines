@@ -16,13 +16,14 @@ class vtkDataConverter( vdm.vtkDataManager ):
     # ------------------------------------------------- #
 
     def __init__( self, Data=None, tag=None, DataOrder=None, DataType=None, shape=None, \
-                  vtkFile="out.vtu", vtkFileType=None, DataFormat="ascii", newFile=True ):
+                  vtkFile="out.vtu", vtkFileType=None, DataFormat="ascii", newFile=True, \
+                  DataLabel=None ):
 
         # ------------------------------------------------- #
         # --- call fieldDataManager initialization      --- #
         # ------------------------------------------------- #
         super().__init__( Data=Data, tag=tag, DataOrder=DataOrder, \
-                          DataType=DataType, shape=shape )
+                          DataType=DataType, shape=shape, DataLabel=DataLabel )
         
         # ------------------------------------------------- #
         # --- vtk native variables                      --- #
