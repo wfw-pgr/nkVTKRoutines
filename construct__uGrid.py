@@ -7,13 +7,13 @@ import vtk.util.numpy_support as npv
 # ===  construct vtk unstructuredgrid                   === #
 # ========================================================= #
 
-class construct__ugrid:
+class construct__uGrid:
 
     
     # ========================================================= #
     # ===  initial settings                                 === #
     # ========================================================= #
-    def __init__( self, nodes=None, elems   =None, vtkFile  ="out.vtu", DataFormat="ascii", \
+    def __init__( self, nodes=None, elems   =None, vtkFile  ="out.vtu", DataFormat="binary", \
                   elementType=None, cellData=None, pointData=None, cellDataName=None, pointDataName=None ):
 
         # ------------------------------------------------- #
@@ -187,4 +187,4 @@ if ( __name__=="__main__" ):
     pointData2  = np.exp( - 0.5 * nodes[:,0]**2 + nodes[:,1]**2, nodes[:,2]**2 )
     pointData   = np.concatenate( ( pointData1[:,None], pointData2[:,None] ), axis=1 )
     
-    construct__ugrid( nodes=nodes, elems=elems, cellData=cellData, pointData=pointData, vtkFile="out.vtu" )
+    construct__uGrid( nodes=nodes, elems=elems, cellData=cellData, pointData=pointData, vtkFile="out.vtu" )
