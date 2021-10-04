@@ -51,6 +51,8 @@ class construct__uGrid:
             self.cellData     = np.copy( cellData  )
             if ( cellDataName is None ):
                 self.cellDataName = [ "eData{0:02}".format(ik+1) for ik in range( cellData.shape[1] ) ]
+            else:
+                self.cellDataName = cellDataName
         else:
             self.cellData     = None
             self.cellDataName = None
@@ -92,7 +94,7 @@ class construct__uGrid:
         if ( self.elementType is not None ):
             cellType = np.full( ( self.nElem,), self.elementType    )
         if ( self.nVert == 4 ):
-            cellType = np.full( ( self.nElem,), vtk.VTK_TETRAHEDRON )
+            cellType = np.full( ( self.nElem,), vtk.VTK_TETRA )
         if ( self.nVert == 8 ):
             cellType = np.full( ( self.nElem,), vtk.VTK_HEXAHEDRON  )
         cellType     = cellType.astype( np.uint8 )
