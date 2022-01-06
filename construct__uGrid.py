@@ -8,7 +8,6 @@ import vtk.util.numpy_support as npv
 # ========================================================= #
 
 class construct__uGrid:
-
     
     # ========================================================= #
     # ===  initial settings                                 === #
@@ -44,9 +43,9 @@ class construct__uGrid:
         # ------------------------------------------------- #
 
         if ( cellData  is not None ):
-            if ( cellData.ndim == 1 ):
+            if   ( cellData.ndim == 1 ):
                 cellData = np.reshape( cellData, (-1,1) )
-            elif ( cellData.ndim > 2 ):
+            elif ( cellData.ndim  > 2 ):
                 sys.exit( "[construct__uGrid] cellData shape == {0} ".format( cellData.shape ) )
             self.cellData     = np.copy( cellData  )
             if ( cellDataName is None ):
@@ -93,8 +92,10 @@ class construct__uGrid:
         #  -- [1-2] cell type                           --  #
         if ( self.elementType is not None ):
             cellType = np.full( ( self.nElem,), self.elementType    )
+        if ( self.nVert == 3 ):
+            cellType = np.full( ( self.nElem,), vtk.VTK_TRIANGLE    )
         if ( self.nVert == 4 ):
-            cellType = np.full( ( self.nElem,), vtk.VTK_TETRA )
+            cellType = np.full( ( self.nElem,), vtk.VTK_TETRA       )
         if ( self.nVert == 8 ):
             cellType = np.full( ( self.nElem,), vtk.VTK_HEXAHEDRON  )
         cellType     = cellType.astype( np.uint8 )
@@ -190,3 +191,23 @@ if ( __name__=="__main__" ):
     pointData   = np.concatenate( ( pointData1[:,None], pointData2[:,None] ), axis=1 )
     
     construct__uGrid( nodes=nodes, elems=elems, cellData=cellData, pointData=pointData, vtkFile="out.vtu" )
+
+
+    import nkUtilities.equiSpaceGrid as esg
+    x1MinMaxNum = [ 0.0, 1.0, 2 ]
+    x2MinMaxNum = [ 0.0, 2.0, 3 ]
+    x3MinMaxNum = [ 0.0, 0.0, 1 ]
+    nodes       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                     x3MinMaxNum=x3MinMaxNum, returnType = "point", \
+                                     DataOrder  ="ijk" )
+
+    elems       = np.array( [ [0,1,2],
+                              [1,2,3],
+                              [2,3,4],
+                              [3,4,5] ] )
+    cellData    = np.array( [ [ 1.0, 1.0 ], [ 2.0, 4.0], [ 3.0, 9.0 ], [ 4.0, 16.0 ] ] )
+    pointData1  = np.sqrt( nodes[:,0]**2 + nodes[:,1]**2, nodes[:,2]**2 )
+    pointData2  = np.exp( - 0.5 * nodes[:,0]**2 + nodes[:,1]**2, nodes[:,2]**2 )
+    pointData   = np.concatenate( ( pointData1[:,None], pointData2[:,None] ), axis=1 )
+
+    construct__uGrid( nodes=nodes, elems=elems, cellData=cellData, pointData=pointData, vtkFile="surf.vtu" )
