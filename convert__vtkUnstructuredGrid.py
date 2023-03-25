@@ -141,7 +141,8 @@ if ( __name__=="__main__" ):
     import nkUtilities.equiSpaceGrid as esg
     x1MinMaxNum       = [ -1.0, 1.0, 41 ]
     x2MinMaxNum       = [ -1.0, 1.0, 31 ]
-    x3MinMaxNum       = [ -1.0, 1.0, 21 ]
+    # x3MinMaxNum       = [ -1.0, 1.0, 21 ]
+    x3MinMaxNum       = [  0.0, 0.0, 1 ]
     ret               = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
                                            x3MinMaxNum=x3MinMaxNum, returnType = "point" )
     Data              = np.zeros( (ret.shape[0],5) )

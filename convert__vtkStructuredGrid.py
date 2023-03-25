@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os, sys, vtk
 import numpy                  as np
 import vtk.util.numpy_support as vtknp
@@ -11,14 +13,25 @@ import vtk.util.numpy_support as vtknp
 # ===  convert__vtkStructuredGrid                       === #
 # ========================================================= #
 
-def convert__vtkStructuredGrid( Data=None, outFile="out.vts", names=None, shape=None, \
-                                DataFormat="binary" ):
+def convert__vtkStructuredGrid( Data=None, inpFile=None, outFile="out.vts", \
+                                names=None, shape=None, DataFormat="binary" ):
     
     # ------------------------------------------------- #
     # --- [1] Data empty check                      --- #
     # ------------------------------------------------- #
     if ( Data is None ):
-        sys.exit( "[vtkStructuredGrid] Data == ???" )
+        if ( inpFile is None ):
+            sys.exit( "[vtkStructuredGrid] Data == ???" )
+        else:
+            import nkUtilities.load__pointFile as lpf
+            Data = lpf.load__pointFile( inpFile=inpFile, returnType="structured" )
+    if ( outFile is None ):
+        if ( inpFile is None ):
+            outFile = "out.vts"
+        else:
+            extension = "." + ( inpFile.split(".") )[-1]
+            outFile   = inpFile.replace( extension, ".vts" )
+            
     # ------------------------------------------------- #
     # --- [2] Data reshaping                        --- #
     # ------------------------------------------------- #
@@ -216,39 +229,63 @@ def save__vtkStructuredGrid( structData=None, DataFormat="binary", outFile="out.
 
 if ( __name__=="__main__" ):
 
-    # ------------------------------------------------- #
-    # --- [1] test for 3D                           --- #
-    # ------------------------------------------------- #    
-    x_,y_,z_,f_       = 0, 1, 2, 3
-    import nkUtilities.equiSpaceGrid as esg
-    x1MinMaxNum       = [ -1.0, 1.0, 41 ]
-    x2MinMaxNum       = [ -1.0, 1.0, 31 ]
-    x3MinMaxNum       = [ -0.0, 0.0,  1 ]
-    ret               = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
-                                           x3MinMaxNum=x3MinMaxNum, returnType = "structured" )
-    LK, LJ, LI        = ret.shape[0], ret.shape[1], ret.shape[2]
-    Data              = np.zeros( (LK,LJ,LI,4) )
-    Data[...,x_:z_+1] = ret[...,x_:z_+1]
-    Data[...,f_]      = np.sqrt( ret[...,x_]**2 + ret[...,y_]**2 )
-    print( Data.shape )
-
-    convert__vtkStructuredGrid( Data=Data, outFile="test/cvs_test01.vts" )
-
-    # ------------------------------------------------- #
-    # --- [2] test for 2D                           --- #
-    # ------------------------------------------------- #    
-    x_,y_,f_          = 0, 1, 2
-    import nkUtilities.equiSpaceGrid as esg
-    x1MinMaxNum       = [ -1.0, 1.0, 41 ]
-    x2MinMaxNum       = [ -1.0, 1.0, 31 ]
-    x3MinMaxNum       = [ -0.0, 0.0,  1 ]
-    ret               = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
-                                           x3MinMaxNum=x3MinMaxNum, returnType = "structured" )
-    ret[...,f_]       = np.sqrt( ret[...,x_]**2 + ret[...,y_]**2 )
-    Data              = np.copy( ret[0,:,:,:] )
-    print( Data.shape )
+    test_mode_flag = False
     
-    convert__vtkStructuredGrid( Data=Data, outFile="test/cvs_test02.vts" )
+    # ------------------------------------------------- #
+    # --- [1] use                                   --- #
+    # ------------------------------------------------- #
+    if ( not( test_mode_flag ) ):
+        x1MinMaxNum       = [ -1.0, 1.0, 21 ]
+        x2MinMaxNum       = [ -1.0, 1.0, 21 ]
+        x3MinMaxNum       = [ -1.0, 1.0, 21 ]
+        import nkUtilities.equiSpaceGrid as esg        
+        ret               = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                               x3MinMaxNum=x3MinMaxNum, returnType = "structured")
+        field             = np.sum( ret**2, axis=3  )
+        Data              = np.concatenate( [ ret, field[:,:,:,np.newaxis] ], axis=3 )
+        import nkUtilities.save__pointFile as spf
+        outFile   = "test/sample.dat"
+        spf.save__pointFile( outFile=outFile, Data=Data )
+
+        import nkUtilities.parse__arguments as par
+        args = par.parse__arguments()
+        convert__vtkStructuredGrid( inpFile=args["inpFile"], outFile=args["outFile"] )
+        
+    # ------------------------------------------------- #
+    # --- [2] test for 3D                           --- #
+    # ------------------------------------------------- #    
+    if ( test_mode_flag ):
+        x_,y_,z_,f_       = 0, 1, 2, 3
+        import nkUtilities.equiSpaceGrid as esg
+        x1MinMaxNum       = [ -1.0, 1.0, 41 ]
+        x2MinMaxNum       = [ -1.0, 1.0, 31 ]
+        x3MinMaxNum       = [ -0.0, 0.0,  1 ]
+        ret               = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                               x3MinMaxNum=x3MinMaxNum, returnType = "structured")
+        LK, LJ, LI        = ret.shape[0], ret.shape[1], ret.shape[2]
+        Data              = np.zeros( (LK,LJ,LI,4) )
+        Data[...,x_:z_+1] = ret[...,x_:z_+1]
+        Data[...,f_]      = np.sqrt( ret[...,x_]**2 + ret[...,y_]**2 )
+        print( Data.shape )
+
+        convert__vtkStructuredGrid( Data=Data, outFile="test/cvs_test01.vts" )
+
+    # ------------------------------------------------- #
+    # --- [3] test for 2D                           --- #
+    # ------------------------------------------------- #
+    if ( test_mode_flag ):
+        x_,y_,f_          = 0, 1, 2
+        import nkUtilities.equiSpaceGrid as esg
+        x1MinMaxNum       = [ -1.0, 1.0, 41 ]
+        x2MinMaxNum       = [ -1.0, 1.0, 31 ]
+        x3MinMaxNum       = [ -0.0, 0.0,  1 ]
+        ret               = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+                                               x3MinMaxNum=x3MinMaxNum, returnType = "structured")
+        ret[...,f_]       = np.sqrt( ret[...,x_]**2 + ret[...,y_]**2 )
+        Data              = np.copy( ret[0,:,:,:] )
+        print( Data.shape )
+    
+        convert__vtkStructuredGrid( Data=Data, outFile="test/cvs_test02.vts" )
 
 
     
